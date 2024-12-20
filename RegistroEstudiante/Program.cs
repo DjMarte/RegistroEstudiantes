@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RegistroEstudiante.Components;
 using RegistroEstudiante.DAL;
+using RegistroEstudiante.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddRazorComponents()
 // Inyeccion del Contexto
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContext<Contexto>(o => o.UseSqlite(ConStr));
+
+// inyeccion del Servicio
+builder.Services.AddScoped<EstudiantesService>();
 
 var app = builder.Build();
 
