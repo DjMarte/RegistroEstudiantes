@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RegistroEstudiante;
+namespace RegistroEstudiante.Models;
 
 public class Estudiantes{
     [Key]
@@ -20,7 +20,7 @@ public class Estudiantes{
     public string? Matricula { get; set; }
 
     [Required(ErrorMessage = "Campo direccion Obligatorio")]
-    public string? Dirreccion { get; set; }
+    public string? Direccion { get; set; }
 
     [StringLength(10, ErrorMessage = "El telefono debe de tener 10 numeros")]
     [RegularExpression(@"^[0-9]+$", ErrorMessage = "Solo se permiten numeros")]
