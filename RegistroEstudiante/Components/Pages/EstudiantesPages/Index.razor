@@ -1,0 +1,157 @@
+@page "/Estudiante/Index"
+@using RegistroEstudiante.Services;
+@using RegistroEstudiante.Models;
+
+@inject EstudiantesService estudiantesService
+
+<PageTitle>Index</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header">
+            <h4 class="card-title"><strong>Listado Estudiantes</strong></h4>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <div class="row">
+                @*Filtrar*@
+                <div class="col-3">
+                    <label class="form-label"><strong>Filtro</strong></label>
+                </div>
+                @*Valor filtro*@
+                <div class="col-3">
+                    <label class="form-label"><strong>B&uacute;squeda</strong></label>
+                </div>
+            </div>
+
+            @*Inputs y Filtrado*@
+            <div class="row">
+                @*Filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Seleccione una opci&oacute;n</option>
+                        <option value="Id">Id</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Matricula">Matr&iacute;cula</option>
+                    </InputSelect>
+                </div>
+                @*Valor Filtro*@
+                <div class="col-3">
+                    <div class="input-group">
+                        <InputText class="form-control" @bind-Value="ValorFiltro"></InputText>
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+                @*Boton Restablecer*@
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary bi bi-arrow-clockwise"
+                        @onclick="Restablecer">
+                    </button>
+                </div>
+
+                @*Boton crear*@
+                <div class="col text-end">
+                    <a href="/Estudiante/Create">
+                        <button type="button" class="btn btn-outline-success bi bi-plus"> Crear</button>
+                    </a>
+                </div>
+            </div>
+            @*Tabla*@
+            <table class="table table-bordered mt-4">
+                @*Encabezado de la tabla*@
+                <thead>
+                    <tr>
+                        <th>EstudianteId</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Matr&iacute;cula</th>
+                        <th>Direcci&oacute;n</th>
+                        <th>Tel&eacute;fono</th>
+                        <th>Editar</th>
+                        <th>Observar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                @*Datos de la tabla*@
+                <tbody>
+                    @foreach(var estudiante in ListaEstudiantes){
+                        <tr>
+                            <td>@estudiante.EstudianteId</td>
+                            <td>@estudiante.Nombre</td>
+                            <td>@estudiante.Apellido</td>
+                            <td>@estudiante.Matricula</td>
+                            <td>@estudiante.Direccion</td>
+                            <td>@estudiante.Telefono</td>
+                                @*Editar*@
+                            <td>
+                                <a href="/Estudiante/Edit/@estudiante.EstudianteId">
+                                    <button type="button" class="btn btn-outline-primary bi bi-pencil-square"></button>
+                                </a> 
+                            </td>
+                                @*Observar*@
+                            <td>
+                                <a href="/Estudiante/Details/@estudiante.EstudianteId">
+                                    <button type="button" class="btn btn-outline-primary bi bi-eye-fill"></button>
+                                </a> 
+                            </td>
+                                @*Eliminar*@
+                            <td>
+                                <a href="/Estudiante/Delete/@estudiante.EstudianteId">
+                                    <button type="button" class="btn btn-outline-primary bi bi-trash2"></button>
+                                </a> 
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @*Footer*@
+        <div class="card-footer">
+            <h6><strong>Total de Estudiantes: </strong>@ListaEstudiantes.Count</h6>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public List<Estudiantes> ListaEstudiantes { get; set; } = []; // es igual a new
+    public string Filtro { get; set; } = string.Empty; // ""
+    public string ValorFiltro { get; set; } = string.Empty; // ""
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId > 0);
+    }
+
+    private async Task Restablecer()
+    {
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+        ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId > 0);
+    }
+
+    private async Task Buscar()
+    {
+        if (ValorFiltro != "")
+        {
+            if (Filtro == "Id" && int.TryParse(ValorFiltro, out int id))
+            {
+                ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId == id);
+            }
+            else if (Filtro == "Nombre")
+            {
+                ListaEstudiantes = await estudiantesService
+                .Listar(e => e.Nombre.Contains(ValorFiltro));
+            }
+            else if (Filtro == "Matricula")
+            {
+                ListaEstudiantes = await estudiantesService
+                .Listar(e => e.Matricula.Contains(ValorFiltro));
+            }
+        }
+        else
+            ListaEstudiantes = await estudiantesService.Listar(e => e.EstudianteId > 0);
+    }
+
+}
