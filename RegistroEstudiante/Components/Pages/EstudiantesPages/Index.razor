@@ -1,6 +1,4 @@
 @page "/Estudiante/Index"
-@using RegistroEstudiante.Services;
-@using RegistroEstudiante.Models;
 
 @inject EstudiantesService estudiantesService
 
@@ -86,7 +84,7 @@
                                 @*Editar*@
                             <td>
                                 <a href="/Estudiante/Edit/@estudiante.EstudianteId">
-                                    <button type="button" class="btn btn-outline-primary bi bi-pencil-square"></button>
+                                    <button type="button" class="btn btn-outline-warning bi bi-pencil-square"></button>
                                 </a> 
                             </td>
                                 @*Observar*@
@@ -98,7 +96,7 @@
                                 @*Eliminar*@
                             <td>
                                 <a href="/Estudiante/Delete/@estudiante.EstudianteId">
-                                    <button type="button" class="btn btn-outline-primary bi bi-trash2"></button>
+                                    <button type="button" class="btn btn-outline-danger bi bi-trash2"></button>
                                 </a> 
                             </td>
                         </tr>
