@@ -28,6 +28,11 @@ public class EstudiantesService(Contexto _contexto){
         return await _contexto.Estudiantes
             .AnyAsync(e => e.EstudianteId == estudianteId);
     }
+    public async Task<bool> ExisteMatricula(int estudianteId, string matricula)
+    {
+        return await _contexto.Estudiantes    // Y == &&, O == ||, diferente !=
+            .AnyAsync(e => e.EstudianteId != estudianteId && e.Matricula.Equals(matricula));
+    }
 
     private async Task<bool> Insertar(Estudiantes estudiante)
     {
