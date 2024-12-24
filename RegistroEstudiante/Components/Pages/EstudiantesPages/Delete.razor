@@ -1,0 +1,75 @@
+@page "/Estudiante/Delete/{EstudianteId:int}"
+
+@inject EstudiantesService estudiantesService
+@inject NavigationManager navigationManager
+
+
+<PageTitle>Delete</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header">
+            <h4 class="card-title"><strong>Eliminar estudiante</strong></h4>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <div class="text-center">
+                <h5><strong>¿Est&aacute;s seguro de eliminar este estudiante?</strong></h5>
+            </div>
+            <ul class="mt-4">
+                <li><strong>EstudianteId:</strong> @Estudiante.EstudianteId</li>
+                <li><strong>Nombre:</strong> @Estudiante.Nombre</li>
+                <li><strong>Apellido:</strong> @Estudiante.Apellido</li>
+                <li><strong>Matr&iacute;cula:</strong> @Estudiante.Matricula</li>
+                <li><strong>Direcci&oacute;n:</strong> @Estudiante.Direccion</li>
+                <li><strong>Tel&eacute;fono:</strong> @Estudiante.Telefono</li>
+            </ul>
+        </div>
+        @*Footer*@
+        <div class="card-footer text-center">
+            @*Boton Volver*@
+            <button type="button" 
+                class="btn btn-outline-primary bi bi-arrow-90deg-left" @onclick="Volver"> Volver
+            </button>
+            @*Boton Eliminar*@
+            <button type="button" class="btn btn-outline-danger bi bi-trash2" @onclick="Eliminar"> Eliminar</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="alert">
+    @Mensaje
+</div>
+
+
+
+
+
+@code {
+    [Parameter]
+    public int EstudianteId { get; set; }
+
+    public Estudiantes Estudiante { get; set; } = new Estudiantes();
+    public string Mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Estudiante = await estudiantesService.Buscar(EstudianteId);
+    }
+
+    private async Task Eliminar()
+    {
+        var resultado = await estudiantesService.Eliminar(Estudiante.EstudianteId);
+        if (resultado is true)
+            Mensaje = "El estudiante ha sido eliinado correctamente";
+        else
+            Mensaje = "Error al eliminar el estudiante";
+    }
+
+    private void Volver()
+    {
+        navigationManager.NavigateTo("/Estudiante/Index");
+    }
+}
