@@ -1,0 +1,108 @@
+@page "/Estudiante/Edit/{EstudianteId:int}"
+
+@inject EstudiantesService estudiantesService
+@inject NavigationManager navigationManager
+
+<PageTitle>Crate</PageTitle>
+<EditForm Model="Estudiante" OnValidSubmit="Modificar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header">
+                <h4 class="card-title"><strong>Modificar Estudiante</strong></h4>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                <div class="row">
+                    @*EstudianteId*@
+                    <div class="col-1">
+                        <label class="form-label"><strong>EstudianteId</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Estudiante.EstudianteId" readonly></InputNumber>
+                    </div>
+                    @*Nombre*@
+                    <div class="col-3 ms-5">
+                        <label class="form-label"><strong>Nombre</strong></label>
+                        <InputText class="form-control" @bind-Value="Estudiante.Nombre"></InputText>
+                        <ValidationMessage For="(()=> Estudiante.Nombre)"/>
+                    </div>
+                    @*Apellido*@
+                    <div class="col-3">
+                        <label class="form-label"><strong>Apellido</strong></label>
+                        <InputText class="form-control" @bind-Value="Estudiante.Apellido"></InputText>
+                        <ValidationMessage For="(()=> Estudiante.Apellido)"/>
+                    </div>
+                    @*Matricula*@
+                    <div class="col-3">
+                        <label class="form-label"><strong>Matr&iacute;cula</strong></label>
+                        <InputText class="form-control" @bind-Value="Estudiante.Matricula"></InputText>
+                        <ValidationMessage For="(()=> Estudiante.Matricula)"/>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    @*Dirección*@
+                    <div class="col-3">
+                        <label class="form-label"><strong>Direcci&oacute;n</strong></label>
+                        <InputText class="form-control" @bind-Value="Estudiante.Direccion"></InputText>
+                        <ValidationMessage For="(()=> Estudiante.Direccion)"/>
+                    </div>
+                    @*Teléfono*@
+                    <div class="col-3">
+                        <label class="form-label"><strong>Tel&eacute;fono</strong></label>
+                        <InputText class="form-control" @bind-Value="Estudiante.Telefono"></InputText>
+                        <ValidationMessage For="(()=> Estudiante.Telefono)"/>
+                    </div>
+                </div>
+            </div>
+            @*Footer*@
+            <div class="card-footer text-center">
+                @*Boton Volver*@
+                <button type="button" 
+                    class="btn btn-outline-primary bi bi-arrow-90deg-left" @onclick="Volver"> Volver
+                </button>
+                @*Boton Guardar*@
+                <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<div class="alert">
+    @Mensaje
+</div>
+
+@code{
+    [Parameter]
+    public int EstudianteId { get; set; }
+
+    public Estudiantes Estudiante { get; set; } = new Estudiantes();
+    public string Mensaje { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync(){
+        Estudiante = await estudiantesService.Buscar(EstudianteId);
+    }
+
+    public async Task Modificar(){
+        if(await Validar() is true){
+            Mensaje = "Ya existe un estudiante con esta Matricula";
+            return;
+        }
+
+        var resultado = await estudiantesService.Guardar(Estudiante);
+        if(resultado is true){
+            Mensaje = "El estudiante ha sido modificado correctamente";
+            Estudiante = new Estudiantes(); // Limpia todos los campos
+        }
+        else
+            Mensaje = "Error al modificar el estudiante";
+    }
+
+    private async Task<bool> Validar(){
+        var comprobar = await estudiantesService.ExisteMatricula(Estudiante.EstudianteId, Estudiante.Matricula);  
+        return comprobar;
+    }
+
+    private void Volver(){
+        navigationManager.NavigateTo("/Estudiante/Index");
+    }
+}
